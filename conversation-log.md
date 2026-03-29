@@ -165,3 +165,18 @@
 
 - 작업: `ports/inp/` → `service/ports/inp/`로 이동, 구현체/테스트 import 업데이트, CLAUDE.md 반영
 - 결과: 전체 테스트 통과
+
+---
+
+### 24. commit --amend
+
+- 커밋: `913a78f` — 이전 커밋(f857c72)에 ports 이동 내용을 amend로 합침
+
+---
+
+### 25. ReminderList API를 Controller에서 구현해줘. OpenAPI Spec을 따라서 구현하고, 그 내용은 openapi.yml 파일에 표준 형식으로 저장해줘
+
+- 작업: Controller, GlobalExceptionHandler, WebConfig(CORS), application.properties 설정, openapi.yml, Controller 통합 테스트 생성
+- API: GET /api/lists, GET /api/lists/{id}, POST /api/lists, PUT /api/lists/{id}, DELETE /api/lists/{id}, PATCH /api/lists/reorder
+- openapi.yml: OpenAPI 3.1.0 표준, ReminderList 전체 API + 스키마 + 에러 응답
+- 테스트: MockMvc 기반 8개 통합 테스트 전체 통과
