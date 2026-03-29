@@ -15,6 +15,7 @@ interface SidebarProps {
   onContextMenu: (e: React.MouseEvent, list: ReminderList) => void;
   onSearch: (query: string) => void;
   onSearchClear: () => void;
+  onListReorder: (ids: number[]) => void;
 }
 
 export default function Sidebar({
@@ -27,6 +28,7 @@ export default function Sidebar({
   onContextMenu,
   onSearch,
   onSearchClear,
+  onListReorder,
 }: SidebarProps) {
   return (
     <aside
@@ -41,6 +43,7 @@ export default function Sidebar({
         onSelect={onSelectList}
         onAddClick={onAddListClick}
         onContextMenu={onContextMenu}
+        onReorder={onListReorder}
       />
     </aside>
   );

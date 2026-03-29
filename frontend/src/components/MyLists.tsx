@@ -1,7 +1,10 @@
 "use client";
 
+import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { ReminderList, Selection } from "@/types";
 import { Plus } from "lucide-react";
+import SortableListItem from "./SortableListItem";
 
 interface MyListsProps {
   lists: ReminderList[];
@@ -9,38 +12,40 @@ interface MyListsProps {
   onSelect: (listId: number) => void;
   onAddClick: () => void;
   onContextMenu: (e: React.MouseEvent, list: ReminderList) => void;
+  onReorder: (ids: number[]) => void;
 }
 
-export default function MyLists({ lists, selection, onSelect, onAddClick, onContextMenu }: MyListsProps) {
+export default function MyLists({ lists, selection, onSelect, onAddClick, onContextMenu, onReorder }: MyListsProps) {
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = lists.findIndex((l) => l.id === active.id);
+    const newIndex = lists.findIndex((l) => l.id === over.id);
+    const newOrder = [...lists];
+    const [moved] = newOrder.splice(oldIndex, 1);
+    newOrder.splice(newIndex, 0, moved);
+    onReorder(newOrder.map((l) => l.id));
+  };
+
   return (
     <div className="flex flex-1 flex-col px-3">
       <p className="mb-1 text-xs font-semibold uppercase" style={{ color: "var(--text-secondary)" }}>
         내 리스트
       </p>
       <div className="flex-1 overflow-y-auto">
-        {lists.map((list) => {
-          const isSelected = selection?.type === "list" && selection.id === list.id;
-          return (
-            <button
-              key={list.id}
-              onClick={() => onSelect(list.id)}
-              onContextMenu={(e) => { e.preventDefault(); onContextMenu(e, list); }}
-              className={`flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors ${
-                isSelected ? "bg-[var(--separator)]" : "hover:bg-[var(--separator)]/50"
-              }`}
-            >
-              <span
-                className="flex h-6 w-6 items-center justify-center rounded-full text-xs text-white"
-                style={{ backgroundColor: list.color }}
-              >
-                ●
-              </span>
-              <span className="flex-1 text-sm" style={{ color: "var(--text-primary)" }}>
-                {list.name}
-              </span>
-            </button>
-          );
-        })}
+        <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={lists.map((l) => l.id)} strategy={verticalListSortingStrategy}>
+            {lists.map((list) => (
+              <SortableListItem
+                key={list.id}
+                list={list}
+                selection={selection}
+                onSelect={onSelect}
+                onContextMenu={onContextMenu}
+              />
+            ))}
+          </SortableContext>
+        </DndContext>
       </div>
       <button
         onClick={onAddClick}

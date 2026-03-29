@@ -169,17 +169,17 @@
 ## Phase 5 — 드래그 앤 드롭
 
 ### 5.1 셋업
-- [ ] `@dnd-kit/core`, `@dnd-kit/sortable`, `@dnd-kit/utilities` 설치
+- [x] `@dnd-kit/core`, `@dnd-kit/sortable`, `@dnd-kit/utilities` 설치
 
 ### 5.2 리마인더 정렬
-- [ ] 리마인더 목록에 DndContext + SortableContext 적용
-- [ ] 각 리마인더 행을 useSortable로 래핑
-- [ ] 드래그 중 그림자 + 기울어짐 시각 효과
-- [ ] 드롭 시 PATCH `/api/reminders/reorder` 호출
+- [x] 리마인더 목록에 DndContext + SortableContext 적용
+- [x] 각 리마인더 행을 useSortable로 래핑
+- [x] 드래그 중 그림자 + 기울어짐 시각 효과
+- [x] 드롭 시 PATCH `/api/reminders/reorder` 호출
 
 ### 5.3 리스트 정렬
-- [ ] 사이드바 내 리스트 목록에 DndContext 적용
-- [ ] 드롭 시 PATCH `/api/lists/reorder` 호출
+- [x] 사이드바 내 리스트 목록에 DndContext 적용
+- [x] 드롭 시 PATCH `/api/lists/reorder` 호출
 
 ---
 

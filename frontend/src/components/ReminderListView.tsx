@@ -1,7 +1,9 @@
 "use client";
 
+import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { Reminder } from "@/types";
-import ReminderRow from "./ReminderRow";
+import SortableReminderRow from "./SortableReminderRow";
 import EmptyState from "./EmptyState";
 import InlineAdd from "./InlineAdd";
 
@@ -15,6 +17,7 @@ interface ReminderListViewProps {
   onToggleFlag: (id: number) => void;
   onReminderClick: (reminder: Reminder) => void;
   onAdd: (title: string) => void;
+  onReorder: (ids: number[]) => void;
 }
 
 export default function ReminderListView({
@@ -27,7 +30,19 @@ export default function ReminderListView({
   onToggleFlag,
   onReminderClick,
   onAdd,
+  onReorder,
 }: ReminderListViewProps) {
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = reminders.findIndex((r) => r.id === active.id);
+    const newIndex = reminders.findIndex((r) => r.id === over.id);
+    const newOrder = [...reminders];
+    const [moved] = newOrder.splice(oldIndex, 1);
+    newOrder.splice(newIndex, 0, moved);
+    onReorder(newOrder.map((r) => r.id));
+  };
+
   return (
     <div className="flex h-full flex-col overflow-y-auto">
       <div className="px-4 pt-6 pb-2">
@@ -39,17 +54,21 @@ export default function ReminderListView({
       {reminders.length === 0 && !showInlineAdd ? (
         <EmptyState />
       ) : (
-        <div className="flex-1">
-          {reminders.map((reminder) => (
-            <ReminderRow
-              key={reminder.id}
-              reminder={reminder}
-              listColor={listColor}
-              onToggleComplete={onToggleComplete}
-              onClick={onReminderClick}
-            />
-          ))}
-        </div>
+        <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={reminders.map((r) => r.id)} strategy={verticalListSortingStrategy}>
+            <div className="flex-1">
+              {reminders.map((reminder) => (
+                <SortableReminderRow
+                  key={reminder.id}
+                  reminder={reminder}
+                  listColor={listColor}
+                  onToggleComplete={onToggleComplete}
+                  onClick={onReminderClick}
+                />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
       )}
 
       {showInlineAdd && <InlineAdd listColor={listColor} onAdd={onAdd} />}

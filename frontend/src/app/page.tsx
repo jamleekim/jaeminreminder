@@ -177,6 +177,7 @@ export default function Home() {
         onContextMenu={(e, list) => setContextMenu({ x: e.clientX, y: e.clientY, list })}
         onSearch={handleSearch}
         onSearchClear={handleSearchClear}
+        onListReorder={async (ids) => { await listApi.reorder(ids); loadLists(); }}
       />
 
       <main className="flex flex-1 overflow-hidden" style={{ backgroundColor: "var(--content-bg)" }}>
@@ -193,6 +194,7 @@ export default function Home() {
                 onToggleFlag={handleToggleFlag}
                 onReminderClick={(r) => setSelectedReminder(r)}
                 onAdd={handleAdd}
+                onReorder={async (ids) => { await reminderApi.reorder(ids); refresh(); }}
               />
             </div>
             {selectedReminder && (
