@@ -1,8 +1,9 @@
 "use client";
 
-import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
+import { DndContext, closestCenter } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { ReminderList, Selection } from "@/types";
+import { useSortableReorder } from "@/lib/useSortableList";
 import { Plus } from "lucide-react";
 import SortableListItem from "./SortableListItem";
 
@@ -16,17 +17,7 @@ interface MyListsProps {
 }
 
 export default function MyLists({ lists, selection, onSelect, onAddClick, onContextMenu, onReorder }: MyListsProps) {
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-    const oldIndex = lists.findIndex((l) => l.id === active.id);
-    const newIndex = lists.findIndex((l) => l.id === over.id);
-    if (oldIndex === -1 || newIndex === -1) return;
-    const newOrder = [...lists];
-    const [moved] = newOrder.splice(oldIndex, 1);
-    newOrder.splice(newIndex, 0, moved);
-    onReorder(newOrder.map((l) => l.id));
-  };
+  const handleDragEnd = useSortableReorder(lists, onReorder);
 
   return (
     <div className="flex flex-1 flex-col px-3">

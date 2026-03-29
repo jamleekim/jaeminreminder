@@ -1,5 +1,6 @@
 package jaemin.ai.jaeminreminder.controller;
 
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,11 +16,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<Map<String, Object>> handleNotFound(NoSuchElementException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
-                "status", 404,
-                "message", e.getMessage(),
-                "timestamp", LocalDateTime.now().toString()
-        ));
+        return errorResponse(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -28,8 +25,27 @@ public class GlobalExceptionHandler {
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .reduce((a, b) -> a + ", " + b)
                 .orElse("Validation failed");
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
-                "status", 400,
+        return errorResponse(HttpStatus.BAD_REQUEST, message);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleConstraintViolation(ConstraintViolationException e) {
+        return errorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException e) {
+        return errorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, Object>> handleGeneral(Exception e) {
+        return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다.");
+    }
+
+    private ResponseEntity<Map<String, Object>> errorResponse(HttpStatus status, String message) {
+        return ResponseEntity.status(status).body(Map.of(
+                "status", status.value(),
                 "message", message,
                 "timestamp", LocalDateTime.now().toString()
         ));

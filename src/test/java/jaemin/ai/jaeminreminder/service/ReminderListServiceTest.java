@@ -151,4 +151,19 @@ class ReminderListServiceTest {
         assertThat(result.get(1).name()).isEqualTo("업무");
         assertThat(result.get(2).name()).isEqualTo("개인");
     }
+
+    @Test
+    @DisplayName("reorder에 존재하지 않는 ID가 포함되면 예외가 발생하고 순서가 변경되지 않는다")
+    void reorder_with_invalid_id_throws_and_rolls_back() {
+        ReminderListResponse first = service.create(new ReminderListRequest("업무", "#007AFF", "briefcase"));
+        service.create(new ReminderListRequest("개인", "#FF3B30", "person"));
+
+        assertThatThrownBy(() -> service.reorder(new ReorderRequest(List.of(first.id(), 999L))))
+                .isInstanceOf(NoSuchElementException.class);
+
+        // 원래 순서가 유지되어야 함
+        List<ReminderListResponse> result = service.findAll();
+        assertThat(result.get(0).name()).isEqualTo("업무");
+        assertThat(result.get(1).name()).isEqualTo("개인");
+    }
 }

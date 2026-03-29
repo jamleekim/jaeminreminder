@@ -1,8 +1,9 @@
 "use client";
 
-import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
+import { DndContext, closestCenter } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { Reminder } from "@/types";
+import { useSortableReorder } from "@/lib/useSortableList";
 import SortableReminderRow from "./SortableReminderRow";
 import EmptyState from "./EmptyState";
 import InlineAdd from "./InlineAdd";
@@ -32,17 +33,7 @@ export default function ReminderListView({
   onAdd,
   onReorder,
 }: ReminderListViewProps) {
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-    const oldIndex = reminders.findIndex((r) => r.id === active.id);
-    const newIndex = reminders.findIndex((r) => r.id === over.id);
-    if (oldIndex === -1 || newIndex === -1) return;
-    const newOrder = [...reminders];
-    const [moved] = newOrder.splice(oldIndex, 1);
-    newOrder.splice(newIndex, 0, moved);
-    onReorder(newOrder.map((r) => r.id));
-  };
+  const handleDragEnd = useSortableReorder(reminders, onReorder);
 
   return (
     <div className="flex h-full flex-col overflow-y-auto">

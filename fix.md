@@ -25,20 +25,20 @@
 
 ### Backend
 
-- [ ] `DefaultReminderService:92`, `DefaultReminderListService:65` — reorder() 존재하지 않는 ID 포함 시 부분 성공 문제 (사전 검증 필요)
-- [ ] `ReminderRepository:25` — 검색 쿼리 와일드카드(`%`, `_`) 이스케이핑 미흡
-- [ ] `ReminderResponse.from()` — N+1 쿼리: `entity.getList()` 호출로 리마인더 목록 조회 시 리스트마다 추가 쿼리 (`@EntityGraph` 또는 join fetch 필요)
-- [ ] `Reminder.java` — `@ManyToOne`에 cascade 삭제 미설정 (`@OnDelete(CASCADE)` 또는 서비스 레벨 처리)
-- [ ] `GlobalExceptionHandler` — `ConstraintViolationException`, `IllegalArgumentException` 등 누락된 예외 타입 처리
-- [ ] DTO 검증 부족 — `ReminderListRequest.color` HEX 형식, `ReminderRequest.notes` 최대 길이, `dueDate` 과거 날짜 허용 여부
+- [x] `DefaultReminderService:92`, `DefaultReminderListService:65` — reorder() 존재하지 않는 ID 포함 시 부분 성공 문제 (사전 검증 필요)
+- [x] `ReminderRepository:25` — 검색 쿼리 와일드카드(`%`, `_`) 이스케이핑 미흡
+- [x] `ReminderResponse.from()` — N+1 쿼리: `entity.getList()` 호출로 리마인더 목록 조회 시 리스트마다 추가 쿼리 (`@EntityGraph` 또는 join fetch 필요)
+- [x] `Reminder.java` — `@ManyToOne`에 cascade 삭제 미설정 (`@OnDelete(CASCADE)` 또는 서비스 레벨 처리)
+- [x] `GlobalExceptionHandler` — `ConstraintViolationException`, `IllegalArgumentException` 등 누락된 예외 타입 처리
+- [x] DTO 검증 부족 — `ReminderListRequest.color` HEX 형식, `ReminderRequest.notes` 최대 길이, `dueDate` 과거 날짜 허용 여부
 
 ### Frontend
 
-- [ ] `page.tsx` — 상태 13개 과다: Context API로 분리하여 Props Drilling 해소
-- [ ] `api.ts:5-10` — 에러 처리: 서버 에러 메시지 손실, 타입화된 ApiError 클래스 필요
-- [ ] `page.tsx:106` — `refresh()` 함수가 `Promise.all()` 미사용으로 3개 API 순차 호출
-- [ ] `ContextMenu.tsx:33` — 뷰포트 경계 벗어남 처리 없음 (화면 끝 근처에서 잘림)
-- [ ] `MyLists.tsx`, `ReminderListView.tsx` — DnD 로직 중복: 재사용 가능한 Hook 추출
+- [x] `page.tsx` — 상태 13개 과다: Context API로 분리하여 Props Drilling 해소
+- [x] `api.ts:5-10` — 에러 처리: 서버 에러 메시지 손실, 타입화된 ApiError 클래스 필요
+- [x] `page.tsx:106` — `refresh()` 함수가 `Promise.all()` 미사용으로 3개 API 순차 호출
+- [x] `ContextMenu.tsx:33` — 뷰포트 경계 벗어남 처리 없음 (화면 끝 근처에서 잘림)
+- [x] `MyLists.tsx`, `ReminderListView.tsx` — DnD 로직 중복: 재사용 가능한 Hook 추출
 
 ---
 

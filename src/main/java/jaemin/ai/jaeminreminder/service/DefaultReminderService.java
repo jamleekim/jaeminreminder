@@ -97,9 +97,9 @@ public class DefaultReminderService implements ReminderService {
     @Transactional
     public void reorder(ReorderRequest request) {
         List<Long> ids = request.ids();
-        for (int i = 0; i < ids.size(); i++) {
-            Reminder reminder = getById(ids.get(i));
-            reminder.updateDisplayOrder(i);
+        List<Reminder> reminders = ids.stream().map(this::getById).toList();
+        for (int i = 0; i < reminders.size(); i++) {
+            reminders.get(i).updateDisplayOrder(i);
         }
     }
 
@@ -140,7 +140,8 @@ public class DefaultReminderService implements ReminderService {
 
     @Override
     public List<ReminderResponse> search(String query) {
-        return reminderRepository.search(query).stream()
+        String escaped = query.replace("%", "\\%").replace("_", "\\_");
+        return reminderRepository.search(escaped).stream()
                 .map(ReminderResponse::from)
                 .toList();
     }

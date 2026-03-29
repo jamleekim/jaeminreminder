@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface MenuItem {
   label: string;
@@ -17,6 +17,7 @@ interface ContextMenuProps {
 
 export default function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState({ left: x, top: y });
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -26,11 +27,24 @@ export default function ContextMenu({ x, y, items, onClose }: ContextMenuProps) 
     return () => document.removeEventListener("mousedown", handler);
   }, [onClose]);
 
+  // 뷰포트 경계 보정
+  useEffect(() => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    let left = x;
+    let top = y;
+    if (left + rect.width > window.innerWidth) left = window.innerWidth - rect.width - 8;
+    if (top + rect.height > window.innerHeight) top = window.innerHeight - rect.height - 8;
+    if (left < 0) left = 8;
+    if (top < 0) top = 8;
+    setPos({ left, top });
+  }, [x, y]);
+
   return (
     <div
       ref={ref}
-      className="fixed z-50 min-w-[160px] rounded-xl py-1 shadow-xl"
-      style={{ left: x, top: y, backgroundColor: "var(--card-bg)" }}
+      className="fixed z-50 min-w-[160px] rounded-xl py-1 shadow-xl animate-scale-in"
+      style={{ left: pos.left, top: pos.top, backgroundColor: "var(--card-bg)" }}
     >
       {items.map((item, i) => (
         <button

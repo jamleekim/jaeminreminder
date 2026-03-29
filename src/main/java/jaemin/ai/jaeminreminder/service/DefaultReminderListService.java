@@ -68,9 +68,10 @@ public class DefaultReminderListService implements ReminderListService {
     @Transactional
     public void reorder(ReorderRequest request) {
         List<Long> ids = request.ids();
-        for (int i = 0; i < ids.size(); i++) {
-            ReminderList list = getById(ids.get(i));
-            list.updateDisplayOrder(i);
+        // 사전 검증: 모든 ID 존재 확인
+        List<ReminderList> lists = ids.stream().map(this::getById).toList();
+        for (int i = 0; i < lists.size(); i++) {
+            lists.get(i).updateDisplayOrder(i);
         }
     }
 

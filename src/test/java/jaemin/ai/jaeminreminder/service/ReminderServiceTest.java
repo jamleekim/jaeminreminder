@@ -259,4 +259,16 @@ class ReminderServiceTest {
         assertThat(service.search("자료")).hasSize(1);
         assertThat(service.search("없는검색어")).isEmpty();
     }
+
+    @Test
+    @DisplayName("검색어에 와일드카드 문자가 포함되어도 리터럴로 검색한다")
+    void search_escapes_wildcard_characters() {
+        service.create(listId, new ReminderRequest("100% 완료", null, null, null, null, null, null));
+        service.create(listId, new ReminderRequest("할일_중요", null, null, null, null, null, null));
+        service.create(listId, new ReminderRequest("일반 할일", null, null, null, null, null, null));
+
+        // '%'로 검색하면 '100% 완료'만 매칭되어야 함 (전체 매칭이 아님)
+        assertThat(service.search("%")).hasSize(1);
+        assertThat(service.search("_")).hasSize(1);
+    }
 }
