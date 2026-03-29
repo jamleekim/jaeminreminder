@@ -106,3 +106,62 @@
 
 - 작업: `CLAUDE.md` 생성
 - 내용: 프로젝트 구조, Entity 관례(Lombok, Setter 금지, 타임스탬프 직접 관리), DTO(Record), 네이밍, 테스트(순수 단위 테스트, DisplayName 한국어, AssertJ), Git(한국어 커밋), 작업 기록 규칙 정리
+
+---
+
+### 16. commit
+
+- 커밋: `e252005` — "ReminderList 도메인 엔티티 및 단위 테스트 추가, 코딩 관례 정립"
+- 포함: CLAUDE.md, tasks.md, conversation-log.md, ReminderList.java, ReminderListTest.java
+
+---
+
+### 17. ReminderListService 만들어
+
+- 작업: Repository, DTO, Service, 테스트 생성
+- 파일: `ReminderListRepository.java`, `ReminderListRequest.java`, `ReminderListResponse.java`, `ReorderRequest.java`, `ReminderListService.java`, `ReminderListServiceTest.java`
+- 추가: `build.gradle.kts`에 `spring-boot-starter-validation` 의존성 추가
+- Service 메서드: findAll, findById, create, update, delete, reorder
+- 테스트: Mockito 기반 7개 단위 테스트 전체 통과
+
+---
+
+### 18. 앞으로 ServiceTest는 @SpringBootTest를 이용한 통합 테스트로 만들어줘. Mock test 사용하지마.
+
+- 작업: `ReminderListServiceTest.java`를 @SpringBootTest + @Transactional 기반 통합 테스트로 전환, Mockito 완전 제거
+- 피드백 메모리 저장: 이후 Service 테스트는 항상 통합 테스트로 작성
+
+---
+
+### 19. ReminderListService는 인터페이스를 분리해서 이를 구현하는 방식으로 만들어줘
+
+- 작업: `ReminderListService.java`를 인터페이스로 변환, `ReminderListServiceImpl.java` 구현체 생성
+- 결과: 기존 통합 테스트 7개 변경 없이 전체 통과
+
+---
+
+### 20. Service 계층의 인터페이스는 ports/inp 패키지 안에 저장해. 구현 클래스의 기본 네이밍 룰은 앞에 Default를 붙이는 걸로
+
+- 작업: 인터페이스를 `ports/inp/ReminderListService.java`로 이동, 구현체를 `service/DefaultReminderListService.java`로 리네임, 기존 파일 삭제, 테스트 import 업데이트
+- 결과: 전체 테스트 통과, 피드백 메모리 업데이트
+
+---
+
+### 21. Service 개발하면서 내가 요구했던 내용은 코딩 가이드로 CLAUDE.md에 넣어줘
+
+- 작업: CLAUDE.md 업데이트
+- 내용: 프로젝트 구조 트리, Entity 관례, Service 관례(ports/inp 인터페이스, Default 접두사, 트랜잭션), DTO(Record), 테스트 관례(통합 테스트, Mock 금지) 추가
+
+---
+
+### 22. commit
+
+- 커밋: `f857c72` — "ReminderList Service 계층 구현 및 통합 테스트 작성"
+- 포함: DTO(3), ports/inp 인터페이스, Repository, DefaultReminderListService, 통합 테스트, CLAUDE.md, build.gradle.kts
+
+---
+
+### 23. ports는 service 패키지 아래로 위치
+
+- 작업: `ports/inp/` → `service/ports/inp/`로 이동, 구현체/테스트 import 업데이트, CLAUDE.md 반영
+- 결과: 전체 테스트 통과
