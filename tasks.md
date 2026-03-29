@@ -100,33 +100,33 @@
 ## Phase 3 — 리마인더 CRUD + 디테일 패널
 
 ### 3.1 인라인 추가
-- [ ] `+ 새로운 리마인더` 버튼 (리스트 색상 텍스트)
-- [ ] 클릭 시 인라인 입력 행 (체크 원 + text input)
-- [ ] Enter → POST API로 생성, 목록에 추가
-- [ ] Escape → 입력 취소
+- [x] `+ 새로운 리마인더` 버튼 (리스트 색상 텍스트)
+- [x] 클릭 시 인라인 입력 행 (체크 원 + text input)
+- [x] Enter → POST API로 생성, 목록에 추가
+- [x] Escape → 입력 취소
 
 ### 3.2 완료 토글
-- [ ] 체크 원 클릭 → PATCH `/api/reminders/{id}/complete`
-- [ ] 완료 시: 원 채움 + 체크마크, 제목 취소선, 텍스트 회색
+- [x] 체크 원 클릭 → PATCH `/api/reminders/{id}/complete`
+- [x] 완료 시: 원 채움 + 체크마크, 제목 취소선, 텍스트 회색
 
 ### 3.3 깃발 토글
-- [ ] 깃발 아이콘 클릭 → PATCH `/api/reminders/{id}/flag`
-- [ ] flagged 시 주황색 깃발 표시
+- [x] 깃발 아이콘 클릭 → PATCH `/api/reminders/{id}/flag`
+- [x] flagged 시 주황색 깃발 표시
 
 ### 3.4 디테일 패널
-- [ ] `DetailPanel` 컴포넌트 — 우측 슬라이드-인 패널
-- [ ] 제목 편집 (input)
-- [ ] 메모 편집 (textarea)
-- [ ] 마감일 토글 + date input
-- [ ] 마감 시간 토글 + time input
-- [ ] 우선순위 선택 (없음 / ! / !! / !!!)
-- [ ] 깃발 토글 스위치
-- [ ] 소속 리스트 변경 (드롭다운)
-- [ ] 자동 저장 (debounce 500ms → PUT API)
+- [x] `DetailPanel` 컴포넌트 — 우측 슬라이드-인 패널
+- [x] 제목 편집 (input)
+- [x] 메모 편집 (textarea)
+- [x] 마감일 토글 + date input
+- [x] 마감 시간 토글 + time input
+- [x] 우선순위 선택 (없음 / ! / !! / !!!)
+- [x] 깃발 토글 스위치
+- [x] 소속 리스트 변경 (드롭다운)
+- [x] 자동 저장 (debounce 500ms → PUT API)
 
 ### 3.5 삭제
-- [ ] 디테일 패널 하단 빨간 삭제 버튼
-- [ ] DELETE API 호출 → 패널 닫기 + 목록에서 제거
+- [x] 디테일 패널 하단 빨간 삭제 버튼
+- [x] DELETE API 호출 → 패널 닫기 + 목록에서 제거
 
 ---
 

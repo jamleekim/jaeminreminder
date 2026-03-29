@@ -5,6 +5,7 @@ import { Reminder, ReminderList, Selection, SmartListType } from "@/types";
 import { listApi, reminderApi } from "@/lib/api";
 import Sidebar from "@/components/Sidebar";
 import ReminderListView from "@/components/ReminderListView";
+import DetailPanel from "@/components/DetailPanel";
 
 const SMART_LIST_META: Record<SmartListType, { title: string; color: string }> = {
   today: { title: "오늘", color: "#007AFF" },
@@ -18,6 +19,7 @@ export default function Home() {
   const [lists, setLists] = useState<ReminderList[]>([]);
   const [reminders, setReminders] = useState<Reminder[]>([]);
   const [selection, setSelection] = useState<Selection | null>(null);
+  const [selectedReminder, setSelectedReminder] = useState<Reminder | null>(null);
   const [smartCounts, setSmartCounts] = useState<Record<SmartListType, number>>({
     today: 0, scheduled: 0, all: 0, completed: 0, flagged: 0,
   });
@@ -64,10 +66,31 @@ export default function Home() {
     loadReminders();
   }, [loadReminders]);
 
-  const handleToggleComplete = async (id: number) => {
-    await reminderApi.toggleComplete(id);
+  const refresh = () => {
     loadReminders();
     loadSmartCounts();
+  };
+
+  const handleToggleComplete = async (id: number) => {
+    await reminderApi.toggleComplete(id);
+    refresh();
+  };
+
+  const handleToggleFlag = async (id: number) => {
+    await reminderApi.toggleFlag(id);
+    refresh();
+  };
+
+  const handleAdd = async (title: string) => {
+    if (selection?.type !== "list") return;
+    await reminderApi.create(selection.id as number, { title });
+    refresh();
+  };
+
+  const handleDelete = async (id: number) => {
+    await reminderApi.delete(id);
+    setSelectedReminder(null);
+    refresh();
   };
 
   const getTitle = (): string => {
@@ -97,22 +120,51 @@ export default function Home() {
         lists={lists}
         smartCounts={smartCounts}
         selection={selection}
-        onSelectSmart={(type) => setSelection({ type: "smart", id: type })}
-        onSelectList={(id) => setSelection({ type: "list", id })}
+        onSelectSmart={(type) => {
+          setSelection({ type: "smart", id: type });
+          setSelectedReminder(null);
+        }}
+        onSelectList={(id) => {
+          setSelection({ type: "list", id });
+          setSelectedReminder(null);
+        }}
         onAddListClick={() => {}}
       />
-      <main className="flex-1 overflow-hidden" style={{ backgroundColor: "var(--content-bg)" }}>
+      <main className="flex flex-1 overflow-hidden" style={{ backgroundColor: "var(--content-bg)" }}>
         {selection ? (
-          <ReminderListView
-            title={getTitle()}
-            titleColor={getTitleColor()}
-            reminders={reminders}
-            listColor={getListColor()}
-            onToggleComplete={handleToggleComplete}
-            onReminderClick={() => {}}
-          />
+          <>
+            <div className="flex-1 overflow-hidden">
+              <ReminderListView
+                title={getTitle()}
+                titleColor={getTitleColor()}
+                reminders={reminders}
+                listColor={getListColor()}
+                showInlineAdd={selection.type === "list"}
+                onToggleComplete={handleToggleComplete}
+                onToggleFlag={handleToggleFlag}
+                onReminderClick={(r) => setSelectedReminder(r)}
+                onAdd={handleAdd}
+              />
+            </div>
+            {selectedReminder && (
+              <DetailPanel
+                reminder={selectedReminder}
+                lists={lists}
+                onUpdate={() => {
+                  refresh();
+                  // Refresh selected reminder
+                  reminderApi.findByList(selectedReminder.listId).then((data) => {
+                    const updated = data.find((r) => r.id === selectedReminder.id);
+                    if (updated) setSelectedReminder(updated);
+                  });
+                }}
+                onDelete={handleDelete}
+                onClose={() => setSelectedReminder(null)}
+              />
+            )}
+          </>
         ) : (
-          <div className="flex h-full items-center justify-center">
+          <div className="flex flex-1 items-center justify-center">
             <p style={{ color: "var(--text-secondary)" }}>리스트를 선택하세요</p>
           </div>
         )}

@@ -3,14 +3,18 @@
 import { Reminder } from "@/types";
 import ReminderRow from "./ReminderRow";
 import EmptyState from "./EmptyState";
+import InlineAdd from "./InlineAdd";
 
 interface ReminderListViewProps {
   title: string;
   titleColor: string;
   reminders: Reminder[];
   listColor: string;
+  showInlineAdd: boolean;
   onToggleComplete: (id: number) => void;
+  onToggleFlag: (id: number) => void;
   onReminderClick: (reminder: Reminder) => void;
+  onAdd: (title: string) => void;
 }
 
 export default function ReminderListView({
@@ -18,8 +22,11 @@ export default function ReminderListView({
   titleColor,
   reminders,
   listColor,
+  showInlineAdd,
   onToggleComplete,
+  onToggleFlag,
   onReminderClick,
+  onAdd,
 }: ReminderListViewProps) {
   return (
     <div className="flex h-full flex-col overflow-y-auto">
@@ -29,7 +36,7 @@ export default function ReminderListView({
         </h1>
       </div>
 
-      {reminders.length === 0 ? (
+      {reminders.length === 0 && !showInlineAdd ? (
         <EmptyState />
       ) : (
         <div className="flex-1">
@@ -44,6 +51,8 @@ export default function ReminderListView({
           ))}
         </div>
       )}
+
+      {showInlineAdd && <InlineAdd listColor={listColor} onAdd={onAdd} />}
     </div>
   );
 }
