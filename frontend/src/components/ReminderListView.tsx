@@ -37,6 +37,7 @@ export default function ReminderListView({
     if (!over || active.id === over.id) return;
     const oldIndex = reminders.findIndex((r) => r.id === active.id);
     const newIndex = reminders.findIndex((r) => r.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
     const newOrder = [...reminders];
     const [moved] = newOrder.splice(oldIndex, 1);
     newOrder.splice(newIndex, 0, moved);

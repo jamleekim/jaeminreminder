@@ -54,10 +54,11 @@ export default function DetailPanel({ reminder, lists, onUpdate, onDelete, onClo
         dueTime: hasTimeEnabled && dueTime ? dueTime : null,
         priority,
         flagged,
+        listId,
       });
       onUpdate();
     }, 500);
-  }, [title, notes, dueDate, dueTime, priority, flagged, hasDateEnabled, hasTimeEnabled, reminder, onUpdate]);
+  }, [title, notes, dueDate, dueTime, priority, flagged, listId, hasDateEnabled, hasTimeEnabled, reminder, onUpdate]);
 
   useEffect(() => {
     save();

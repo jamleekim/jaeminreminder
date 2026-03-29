@@ -6,6 +6,7 @@ import jaemin.ai.jaeminreminder.dto.ReminderListResponse;
 import jaemin.ai.jaeminreminder.dto.ReorderRequest;
 import jaemin.ai.jaeminreminder.service.ports.inp.ReminderListService;
 import jaemin.ai.jaeminreminder.repository.ReminderListRepository;
+import jaemin.ai.jaeminreminder.repository.ReminderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ import java.util.NoSuchElementException;
 public class DefaultReminderListService implements ReminderListService {
 
     private final ReminderListRepository repository;
+    private final ReminderRepository reminderRepository;
 
     @Override
     public List<ReminderListResponse> findAll() {
@@ -35,7 +37,8 @@ public class DefaultReminderListService implements ReminderListService {
     @Override
     @Transactional
     public ReminderListResponse create(ReminderListRequest request) {
-        int nextOrder = (int) repository.count();
+        ReminderList top = repository.findTopByOrderByDisplayOrderDesc();
+        int nextOrder = top != null ? top.getDisplayOrder() + 1 : 0;
         ReminderList list = ReminderList.builder()
                 .name(request.name())
                 .color(request.color())
@@ -57,6 +60,7 @@ public class DefaultReminderListService implements ReminderListService {
     @Transactional
     public void delete(Long id) {
         ReminderList list = getById(id);
+        reminderRepository.deleteAll(reminderRepository.findByListIdOrderByDisplayOrderAsc(id));
         repository.delete(list);
     }
 

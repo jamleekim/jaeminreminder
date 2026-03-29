@@ -81,27 +81,35 @@ export default function Home() {
     });
   }, []);
 
-  const loadReminders = useCallback(async () => {
-    if (searchMode && searchQuery) {
-      const data = await reminderApi.search(searchQuery);
-      setReminders(data);
-      return;
+  const loadReminders = useCallback(async (signal?: AbortSignal) => {
+    try {
+      if (searchMode && searchQuery) {
+        const data = await reminderApi.search(searchQuery);
+        if (!signal?.aborted) setReminders(data);
+        return;
+      }
+      if (!selection) { setReminders([]); return; }
+      let data: Reminder[];
+      if (selection.type === "smart") {
+        data = await reminderApi.findSmart(selection.id as SmartListType);
+      } else {
+        data = await reminderApi.findByList(selection.id as number);
+      }
+      if (!signal?.aborted) setReminders(data);
+    } catch {
+      if (!signal?.aborted) showToast("데이터를 불러오지 못했습니다.");
     }
-    if (!selection) { setReminders([]); return; }
-    let data: Reminder[];
-    if (selection.type === "smart") {
-      data = await reminderApi.findSmart(selection.id as SmartListType);
-    } else {
-      data = await reminderApi.findByList(selection.id as number);
-    }
-    setReminders(data);
   }, [selection, searchMode, searchQuery]);
 
   useEffect(() => {
     Promise.all([loadLists(), loadSmartCounts()]).finally(() => setLoading(false));
   }, [loadLists, loadSmartCounts]);
 
-  useEffect(() => { loadReminders(); }, [loadReminders]);
+  useEffect(() => {
+    const controller = new AbortController();
+    loadReminders(controller.signal);
+    return () => controller.abort();
+  }, [loadReminders]);
 
   const refresh = () => { loadReminders(); loadSmartCounts(); loadLists(); };
 

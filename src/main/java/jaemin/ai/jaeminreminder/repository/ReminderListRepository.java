@@ -8,4 +8,6 @@ import java.util.List;
 public interface ReminderListRepository extends JpaRepository<ReminderList, Long> {
 
     List<ReminderList> findAllByOrderByDisplayOrderAsc();
+
+    ReminderList findTopByOrderByDisplayOrderDesc();
 }

@@ -56,8 +56,8 @@ export default function InlineAdd({ listColor, onAdd }: InlineAddProps) {
         onChange={(e) => setTitle(e.target.value)}
         onKeyDown={handleKeyDown}
         onBlur={() => {
-          handleSubmit();
           setIsEditing(false);
+          setTitle("");
         }}
         placeholder="새로운 리마인더"
         className="flex-1 bg-transparent text-sm outline-none"

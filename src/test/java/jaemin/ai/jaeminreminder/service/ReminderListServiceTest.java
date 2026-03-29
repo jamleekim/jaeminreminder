@@ -2,9 +2,12 @@ package jaemin.ai.jaeminreminder.service;
 
 import jaemin.ai.jaeminreminder.dto.ReminderListRequest;
 import jaemin.ai.jaeminreminder.dto.ReminderListResponse;
+import jaemin.ai.jaeminreminder.dto.ReminderRequest;
 import jaemin.ai.jaeminreminder.dto.ReorderRequest;
 import jaemin.ai.jaeminreminder.service.ports.inp.ReminderListService;
+import jaemin.ai.jaeminreminder.service.ports.inp.ReminderService;
 import jaemin.ai.jaeminreminder.repository.ReminderListRepository;
+import jaemin.ai.jaeminreminder.repository.ReminderRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,8 +31,15 @@ class ReminderListServiceTest {
     @Autowired
     private ReminderListRepository repository;
 
+    @Autowired
+    private ReminderService reminderService;
+
+    @Autowired
+    private ReminderRepository reminderRepository;
+
     @BeforeEach
     void setUp() {
+        reminderRepository.deleteAll();
         repository.deleteAll();
     }
 
@@ -95,6 +105,36 @@ class ReminderListServiceTest {
         service.delete(created.id());
 
         assertThat(service.findAll()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("리스트 삭제 시 소속 리마인더도 함께 삭제된다")
+    void delete_cascades_reminders() {
+        ReminderListResponse list = service.create(new ReminderListRequest("업무", "#007AFF", "briefcase"));
+        reminderService.create(list.id(), new ReminderRequest("할일1", null, null, null, null, null, null));
+        reminderService.create(list.id(), new ReminderRequest("할일2", null, null, null, null, null, null));
+
+        service.delete(list.id());
+
+        assertThat(reminderRepository.findAll()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("리스트 삭제 후 새로 생성해도 displayOrder가 중복되지 않는다")
+    void create_after_delete_no_duplicate_displayOrder() {
+        ReminderListResponse first = service.create(new ReminderListRequest("업무", "#007AFF", "briefcase"));
+        service.create(new ReminderListRequest("개인", "#FF3B30", "person"));
+        service.create(new ReminderListRequest("쇼핑", "#34C759", "cart"));
+
+        // 첫 번째 삭제 후 새로 생성
+        service.delete(first.id());
+        ReminderListResponse fourth = service.create(new ReminderListRequest("운동", "#FF9500", "dumbbell"));
+
+        // displayOrder가 기존 값과 중복되면 안 됨
+        List<ReminderListResponse> all = service.findAll();
+        long distinctOrders = all.stream().map(ReminderListResponse::displayOrder).distinct().count();
+        assertThat(distinctOrders).isEqualTo(all.size());
+        assertThat(fourth.displayOrder()).isGreaterThanOrEqualTo(2);
     }
 
     @Test

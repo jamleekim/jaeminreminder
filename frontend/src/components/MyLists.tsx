@@ -21,6 +21,7 @@ export default function MyLists({ lists, selection, onSelect, onAddClick, onCont
     if (!over || active.id === over.id) return;
     const oldIndex = lists.findIndex((l) => l.id === active.id);
     const newIndex = lists.findIndex((l) => l.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
     const newOrder = [...lists];
     const [moved] = newOrder.splice(oldIndex, 1);
     newOrder.splice(newIndex, 0, moved);
