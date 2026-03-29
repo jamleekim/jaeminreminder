@@ -28,6 +28,9 @@ export default function ListModal({ editingList, onSave, onCancel }: ListModalPr
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 animate-fade-in" onClick={onCancel}>
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={editingList ? "리스트 편집" : "리스트 추가"}
         className="w-[340px] rounded-2xl p-5 animate-scale-in"
         style={{ backgroundColor: "var(--card-bg)" }}
         onClick={(e) => e.stopPropagation()}
@@ -60,6 +63,7 @@ export default function ListModal({ editingList, onSave, onCancel }: ListModalPr
             <button
               key={c.value}
               onClick={() => setColor(c.value)}
+              aria-label={`색상: ${c.name}`}
               className={`h-7 w-7 rounded-full transition-transform ${color === c.value ? "scale-125 ring-2 ring-offset-1" : ""}`}
               style={{ backgroundColor: c.value }}
             />

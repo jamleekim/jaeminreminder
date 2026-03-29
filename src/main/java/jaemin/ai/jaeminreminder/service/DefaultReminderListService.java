@@ -8,12 +8,14 @@ import jaemin.ai.jaeminreminder.service.ports.inp.ReminderListService;
 import jaemin.ai.jaeminreminder.repository.ReminderListRepository;
 import jaemin.ai.jaeminreminder.repository.ReminderRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -45,7 +47,9 @@ public class DefaultReminderListService implements ReminderListService {
                 .icon(request.icon())
                 .displayOrder(nextOrder)
                 .build();
-        return ReminderListResponse.from(repository.save(list));
+        ReminderListResponse saved = ReminderListResponse.from(repository.save(list));
+        log.info("리스트 생성: id={}, name={}", saved.id(), saved.name());
+        return saved;
     }
 
     @Override
@@ -62,13 +66,16 @@ public class DefaultReminderListService implements ReminderListService {
         ReminderList list = getById(id);
         reminderRepository.deleteAll(reminderRepository.findByListIdOrderByDisplayOrderAsc(id));
         repository.delete(list);
+        log.info("리스트 삭제: id={}, name={}", id, list.getName());
     }
 
     @Override
     @Transactional
     public void reorder(ReorderRequest request) {
         List<Long> ids = request.ids();
-        // 사전 검증: 모든 ID 존재 확인
+        if (ids.size() != ids.stream().distinct().count()) {
+            throw new IllegalArgumentException("중복된 ID가 포함되어 있습니다.");
+        }
         List<ReminderList> lists = ids.stream().map(this::getById).toList();
         for (int i = 0; i < lists.size(); i++) {
             lists.get(i).updateDisplayOrder(i);

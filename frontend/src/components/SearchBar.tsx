@@ -34,6 +34,7 @@ export default function SearchBar({ onSearch, onClear }: SearchBarProps) {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="검색"
+        aria-label="리마인더 검색"
         className="w-full rounded-lg py-1.5 pl-7 pr-7 text-sm outline-none"
         style={{
           backgroundColor: "var(--separator)",

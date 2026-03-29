@@ -60,6 +60,7 @@ export default function ReminderRow({ reminder, listColor, onToggleComplete, onC
     >
       <button
         onClick={handleComplete}
+        aria-label={reminder.completed ? "완료 취소" : "완료 처리"}
         className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border-2 transition-all duration-200"
         style={{
           borderColor: listColor,

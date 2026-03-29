@@ -21,7 +21,7 @@ export default function SortableReminderRow({ reminder, listColor, onToggleCompl
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
-    boxShadow: isDragging ? "0 4px 12px rgba(0,0,0,0.15)" : undefined,
+    boxShadow: isDragging ? "0 4px 12px var(--drag-shadow, rgba(0,0,0,0.15))" : undefined,
     zIndex: isDragging ? 50 : undefined,
     position: "relative" as const,
   };

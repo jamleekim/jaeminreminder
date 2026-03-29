@@ -9,6 +9,7 @@ import jaemin.ai.jaeminreminder.repository.ReminderListRepository;
 import jaemin.ai.jaeminreminder.repository.ReminderRepository;
 import jaemin.ai.jaeminreminder.service.ports.inp.ReminderService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -97,6 +99,9 @@ public class DefaultReminderService implements ReminderService {
     @Transactional
     public void reorder(ReorderRequest request) {
         List<Long> ids = request.ids();
+        if (ids.size() != ids.stream().distinct().count()) {
+            throw new IllegalArgumentException("중복된 ID가 포함되어 있습니다.");
+        }
         List<Reminder> reminders = ids.stream().map(this::getById).toList();
         for (int i = 0; i < reminders.size(); i++) {
             reminders.get(i).updateDisplayOrder(i);

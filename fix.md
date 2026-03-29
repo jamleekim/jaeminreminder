@@ -46,26 +46,26 @@
 
 ### Backend
 
-- [ ] `WebConfig.java:15` — `allowedHeaders("*")` 과도 개방 → `Content-Type` 등 명시적 제한
-- [ ] 전반 — SLF4J 로깅 부재 (서비스, 컨트롤러)
-- [ ] 전반 — 페이지네이션 미지원 (대량 데이터 시 성능 저하)
-- [ ] `Reminder.java`, `ReminderList.java` — `@Getter` 전체 노출 대신 필요 필드만 공개 고려
-- [ ] `ReorderRequest` — 중복 ID 검사 없음
+- [x] `WebConfig.java:15` — `allowedHeaders("*")` 과도 개방 → `Content-Type` 등 명시적 제한
+- [x] 전반 — SLF4J 로깅 부재 (서비스, 컨트롤러)
+- [ ] 전반 — 페이지네이션 미지원 (대량 데이터 시 성능 저하) → v2 범위로 이관
+- [ ] `Reminder.java`, `ReminderList.java` — `@Getter` 전체 노출 대신 필요 필드만 공개 고려 → DTO 매핑에 필요하므로 유지
+- [x] `ReorderRequest` — 중복 ID 검사 없음
 
 ### Frontend
 
-- [ ] 접근성(a11y) — 버튼/입력에 `aria-label` 전반 부재 (ReminderRow, DetailPanel, SearchBar, ListModal)
-- [ ] 접근성 — `ListModal`에 `role="dialog"`, `aria-modal="true"` 누락
-- [ ] 접근성 — DnD 키보드 센서(`@dnd-kit/keyboard`) 미사용
-- [ ] `SortableReminderRow.tsx` — 다크모드에서 드래그 그림자 색상 부적절
-- [ ] `Toast.tsx` — 다중 토스트 미지원 (큐 또는 동시 표시)
-- [ ] `constants.ts` vs `globals.css` — 색상 정의 이중 관리, 단일화 필요
-- [ ] `SmartListCard.tsx:22` — CSS 변수 타입 강제 캐스트 (`as React.CSSProperties`)
+- [x] 접근성(a11y) — 버튼/입력에 `aria-label` 전반 부재 (ReminderRow, DetailPanel, SearchBar, ListModal)
+- [x] 접근성 — `ListModal`에 `role="dialog"`, `aria-modal="true"` 누락
+- [ ] 접근성 — DnD 키보드 센서(`@dnd-kit/keyboard`) 미사용 → v2 범위로 이관
+- [x] `SortableReminderRow.tsx` — 다크모드에서 드래그 그림자 색상 부적절
+- [ ] `Toast.tsx` — 다중 토스트 미지원 (큐 또는 동시 표시) → v2 범위로 이관
+- [ ] `constants.ts` vs `globals.css` — 색상 정의 이중 관리, 단일화 필요 → v2 범위로 이관
+- [ ] `SmartListCard.tsx:22` — CSS 변수 타입 강제 캐스트 (`as React.CSSProperties`) → Tailwind 제한으로 유지
 
 ---
 
 ## 아키텍처 / 공통
 
-- [ ] openapi.yml 수동 관리 → Swagger 자동 생성 고려
-- [ ] 동시성 제어 미흡 (낙관적 잠금 등)
-- [ ] 테스트 — displayOrder 중복 시나리오, 리스트 삭제 후 리마인더 조회, reorder 잘못된 ID 등 엣지 케이스 보강
+- [ ] openapi.yml 수동 관리 → Swagger 자동 생성 고려 → v2 범위로 이관
+- [ ] 동시성 제어 미흡 (낙관적 잠금 등) → v2 범위로 이관
+- [x] 테스트 — displayOrder 중복 시나리오, 리스트 삭제 후 리마인더 조회, reorder 잘못된 ID 등 엣지 케이스 보강
