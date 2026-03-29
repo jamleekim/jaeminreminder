@@ -133,36 +133,36 @@
 ## Phase 4 — 리스트 CRUD + 스마트 리스트 + 검색
 
 ### 4.1 리스트 생성 모달
-- [ ] `ListModal` 컴포넌트 — 중앙 모달
-- [ ] 리스트 이름 텍스트 입력
-- [ ] 12색 프리셋 색상 선택 팔레트
-- [ ] 아이콘 선택 그리드
-- [ ] 상단 원형 미리보기 (색상 + 아이콘)
-- [ ] 취소 / 완료 버튼 → POST API
+- [x] `ListModal` 컴포넌트 — 중앙 모달
+- [x] 리스트 이름 텍스트 입력
+- [x] 12색 프리셋 색상 선택 팔레트
+- [x] 아이콘 선택 그리드
+- [x] 상단 원형 미리보기 (색상 + 아이콘)
+- [x] 취소 / 완료 버튼 → POST API
 
 ### 4.2 리스트 편집
-- [ ] 리스트 행 우클릭 → 컨텍스트 메뉴 (편집, 삭제)
-- [ ] 편집 클릭 → `ListModal` 재활용 (기존 값 채움) → PUT API
+- [x] 리스트 행 우클릭 → 컨텍스트 메뉴 (편집, 삭제)
+- [x] 편집 클릭 → `ListModal` 재활용 (기존 값 채움) → PUT API
 
 ### 4.3 리스트 삭제
-- [ ] 삭제 클릭 → 확인 다이얼로그 ("리마인더도 함께 삭제됩니다")
-- [ ] 확인 → DELETE API → 사이드바에서 제거
+- [x] 삭제 클릭 → 확인 다이얼로그 ("리마인더도 함께 삭제됩니다")
+- [x] 확인 → DELETE API → 사이드바에서 제거
 
 ### 4.4 스마트 리스트 연동
-- [ ] 오늘 카드 클릭 → `/api/reminders/today` fetch & 표시
-- [ ] 예정 카드 → `/api/reminders/scheduled`
-- [ ] 전체 카드 → `/api/reminders/all`
-- [ ] 완료됨 카드 → `/api/reminders/completed`
-- [ ] 깃발 카드 → `/api/reminders/flagged`
-- [ ] 각 카드 카운트 실시간 갱신
-- [ ] 스마트 리스트 뷰에서 리마인더에 소속 리스트 태그 표시
+- [x] 오늘 카드 클릭 → `/api/reminders/today` fetch & 표시
+- [x] 예정 카드 → `/api/reminders/scheduled`
+- [x] 전체 카드 → `/api/reminders/all`
+- [x] 완료됨 카드 → `/api/reminders/completed`
+- [x] 깃발 카드 → `/api/reminders/flagged`
+- [x] 각 카드 카운트 실시간 갱신
+- [x] 스마트 리스트 뷰에서 리마인더에 소속 리스트 태그 표시
 
 ### 4.5 검색
-- [ ] 사이드바 상단 검색 바 (돋보기 아이콘 + input)
-- [ ] debounce 300ms → GET `/api/reminders/search?q=`
-- [ ] 검색 결과 리스트별 그룹핑 표시
+- [x] 사이드바 상단 검색 바 (돋보기 아이콘 + input)
+- [x] debounce 300ms → GET `/api/reminders/search?q=`
+- [x] 검색 결과 리스트별 그룹핑 표시
 - [ ] 매칭 텍스트 하이라이트
-- [ ] 결과 없음 상태 UI
+- [x] 결과 없음 상태 UI
 
 ---
 

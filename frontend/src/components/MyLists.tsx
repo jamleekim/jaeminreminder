@@ -8,9 +8,10 @@ interface MyListsProps {
   selection: Selection | null;
   onSelect: (listId: number) => void;
   onAddClick: () => void;
+  onContextMenu: (e: React.MouseEvent, list: ReminderList) => void;
 }
 
-export default function MyLists({ lists, selection, onSelect, onAddClick }: MyListsProps) {
+export default function MyLists({ lists, selection, onSelect, onAddClick, onContextMenu }: MyListsProps) {
   return (
     <div className="flex flex-1 flex-col px-3">
       <p className="mb-1 text-xs font-semibold uppercase" style={{ color: "var(--text-secondary)" }}>
@@ -23,6 +24,7 @@ export default function MyLists({ lists, selection, onSelect, onAddClick }: MyLi
             <button
               key={list.id}
               onClick={() => onSelect(list.id)}
+              onContextMenu={(e) => { e.preventDefault(); onContextMenu(e, list); }}
               className={`flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors ${
                 isSelected ? "bg-[var(--separator)]" : "hover:bg-[var(--separator)]/50"
               }`}
@@ -31,7 +33,7 @@ export default function MyLists({ lists, selection, onSelect, onAddClick }: MyLi
                 className="flex h-6 w-6 items-center justify-center rounded-full text-xs text-white"
                 style={{ backgroundColor: list.color }}
               >
-                {list.icon ? "●" : "●"}
+                ●
               </span>
               <span className="flex-1 text-sm" style={{ color: "var(--text-primary)" }}>
                 {list.name}
