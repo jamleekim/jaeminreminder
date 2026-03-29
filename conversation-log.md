@@ -196,3 +196,13 @@
 - 신규 파일: Priority Enum, Reminder Entity/Test, ReminderRepository, ReminderRequest/Response DTO, ReminderService 인터페이스+구현체+통합 테스트, ReminderController+통합 테스트, openapi.yml Reminder API 추가
 - tasks.md: Phase 1 전체 항목 체크 완료
 - 결과: 전체 테스트 통과, 앱 기동+curl 검증 완료
+
+---
+
+### 28. phase 2번부터 5번까지 계속 진행해줘. phase를 하나 마치면 commit and push
+
+- Phase 2 (`78e8f42`): Next.js 프로젝트 셋업, 글로벌 CSS(Apple 팔레트), 타입 정의, API Client, Sidebar(SmartListGrid+MyLists), ReminderListView, ReminderRow, EmptyState
+- Phase 3 (`3d31718`): InlineAdd(인라인 리마인더 추가), DetailPanel(자동 저장, 날짜/시간/우선순위/깃발/리스트 변경/삭제), 완료/깃발 토글
+- Phase 4 (`9af8c71`): ListModal(12색+아이콘), ContextMenu(우클릭 편집/삭제), SearchBar(debounce 300ms), 스마트 리스트 5종 실시간 카운트
+- Phase 5 (`a69c292`): @dnd-kit으로 리마인더/리스트 드래그 앤 드롭 정렬
+- tasks.md: Phase 2~5 전체 항목 체크 완료

@@ -26,9 +26,9 @@ export default function ListModal({ editingList, onSave, onCancel }: ListModalPr
   const IconComponent = ICON_MAP[icon] ?? List;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onCancel}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 animate-fade-in" onClick={onCancel}>
       <div
-        className="w-[340px] rounded-2xl p-5"
+        className="w-[340px] rounded-2xl p-5 animate-scale-in"
         style={{ backgroundColor: "var(--card-bg)" }}
         onClick={(e) => e.stopPropagation()}
       >

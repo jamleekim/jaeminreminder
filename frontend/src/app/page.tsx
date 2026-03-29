@@ -8,6 +8,9 @@ import ReminderListView from "@/components/ReminderListView";
 import DetailPanel from "@/components/DetailPanel";
 import ListModal from "@/components/ListModal";
 import ContextMenu from "@/components/ContextMenu";
+import Toast from "@/components/Toast";
+import MobileHeader from "@/components/MobileHeader";
+import { ReminderListSkeleton } from "@/components/Skeleton";
 
 const SMART_LIST_META: Record<SmartListType, { title: string; color: string }> = {
   today: { title: "오늘", color: "#007AFF" },
@@ -22,6 +25,7 @@ export default function Home() {
   const [reminders, setReminders] = useState<Reminder[]>([]);
   const [selection, setSelection] = useState<Selection | null>(null);
   const [selectedReminder, setSelectedReminder] = useState<Reminder | null>(null);
+  const [loading, setLoading] = useState(true);
   const [smartCounts, setSmartCounts] = useState<Record<SmartListType, number>>({
     today: 0, scheduled: 0, all: 0, completed: 0, flagged: 0,
   });
@@ -38,6 +42,22 @@ export default function Home() {
   // Search
   const [searchMode, setSearchMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Toast
+  const [toast, setToast] = useState<string | null>(null);
+
+  // Mobile sidebar
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const showToast = (msg: string) => setToast(msg);
+
+  const withErrorHandling = async (fn: () => Promise<void>) => {
+    try {
+      await fn();
+    } catch {
+      showToast("요청에 실패했습니다. 다시 시도해주세요.");
+    }
+  };
 
   const loadLists = useCallback(async () => {
     const data = await listApi.findAll();
@@ -77,53 +97,91 @@ export default function Home() {
     setReminders(data);
   }, [selection, searchMode, searchQuery]);
 
-  useEffect(() => { loadLists(); loadSmartCounts(); }, [loadLists, loadSmartCounts]);
+  useEffect(() => {
+    Promise.all([loadLists(), loadSmartCounts()]).finally(() => setLoading(false));
+  }, [loadLists, loadSmartCounts]);
+
   useEffect(() => { loadReminders(); }, [loadReminders]);
 
   const refresh = () => { loadReminders(); loadSmartCounts(); loadLists(); };
 
-  const handleToggleComplete = async (id: number) => { await reminderApi.toggleComplete(id); refresh(); };
-  const handleToggleFlag = async (id: number) => { await reminderApi.toggleFlag(id); refresh(); };
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (selectedReminder) { setSelectedReminder(null); e.preventDefault(); }
+        else if (showListModal) { setShowListModal(false); setEditingList(null); e.preventDefault(); }
+      }
+      if (e.key === "Delete" || e.key === "Backspace") {
+        if (selectedReminder && !["INPUT", "TEXTAREA", "SELECT"].includes((e.target as HTMLElement).tagName)) {
+          withErrorHandling(async () => {
+            await reminderApi.delete(selectedReminder.id);
+            setSelectedReminder(null);
+            refresh();
+          });
+          e.preventDefault();
+        }
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [selectedReminder, showListModal]);
+
+  const handleToggleComplete = async (id: number) => {
+    await withErrorHandling(async () => { await reminderApi.toggleComplete(id); refresh(); });
+  };
+
+  const handleToggleFlag = async (id: number) => {
+    await withErrorHandling(async () => { await reminderApi.toggleFlag(id); refresh(); });
+  };
 
   const handleAdd = async (title: string) => {
     if (selection?.type !== "list") return;
-    await reminderApi.create(selection.id as number, { title });
-    refresh();
+    await withErrorHandling(async () => {
+      await reminderApi.create(selection.id as number, { title });
+      refresh();
+    });
   };
 
   const handleDelete = async (id: number) => {
-    await reminderApi.delete(id);
-    setSelectedReminder(null);
-    refresh();
+    await withErrorHandling(async () => {
+      await reminderApi.delete(id);
+      setSelectedReminder(null);
+      refresh();
+    });
   };
 
-  // List CRUD
   const handleCreateList = async (data: { name: string; color: string; icon: string }) => {
-    await listApi.create(data);
-    setShowListModal(false);
-    loadLists();
+    await withErrorHandling(async () => {
+      await listApi.create(data);
+      setShowListModal(false);
+      loadLists();
+    });
   };
 
   const handleUpdateList = async (data: { name: string; color: string; icon: string }) => {
     if (!editingList) return;
-    await listApi.update(editingList.id, data);
-    setEditingList(null);
-    setShowListModal(false);
-    loadLists();
+    await withErrorHandling(async () => {
+      await listApi.update(editingList.id, data);
+      setEditingList(null);
+      setShowListModal(false);
+      loadLists();
+    });
   };
 
   const handleDeleteList = async (list: ReminderList) => {
     if (!confirm(`"${list.name}" 리스트와 포함된 리마인더가 모두 삭제됩니다.`)) return;
-    await listApi.delete(list.id);
-    if (selection?.type === "list" && selection.id === list.id) {
-      setSelection(null);
-      setReminders([]);
-    }
-    loadLists();
-    loadSmartCounts();
+    await withErrorHandling(async () => {
+      await listApi.delete(list.id);
+      if (selection?.type === "list" && selection.id === list.id) {
+        setSelection(null);
+        setReminders([]);
+      }
+      loadLists();
+      loadSmartCounts();
+    });
   };
 
-  // Search
   const handleSearch = useCallback((query: string) => {
     setSearchMode(true);
     setSearchQuery(query);
@@ -135,6 +193,20 @@ export default function Home() {
     setSearchMode(false);
     setSearchQuery("");
   }, []);
+
+  const selectSmart = (type: SmartListType) => {
+    setSearchMode(false); setSearchQuery("");
+    setSelection({ type: "smart", id: type });
+    setSelectedReminder(null);
+    setSidebarOpen(false);
+  };
+
+  const selectList = (id: number) => {
+    setSearchMode(false); setSearchQuery("");
+    setSelection({ type: "list", id });
+    setSelectedReminder(null);
+    setSidebarOpen(false);
+  };
 
   const getTitle = (): string => {
     if (searchMode) return `검색: "${searchQuery}"`;
@@ -159,65 +231,99 @@ export default function Home() {
 
   return (
     <div className="flex h-full">
-      <Sidebar
-        lists={lists}
-        smartCounts={smartCounts}
-        selection={selection}
-        onSelectSmart={(type) => {
-          setSearchMode(false); setSearchQuery("");
-          setSelection({ type: "smart", id: type });
-          setSelectedReminder(null);
-        }}
-        onSelectList={(id) => {
-          setSearchMode(false); setSearchQuery("");
-          setSelection({ type: "list", id });
-          setSelectedReminder(null);
-        }}
-        onAddListClick={() => { setEditingList(null); setShowListModal(true); }}
-        onContextMenu={(e, list) => setContextMenu({ x: e.clientX, y: e.clientY, list })}
-        onSearch={handleSearch}
-        onSearchClear={handleSearchClear}
-        onListReorder={async (ids) => { await listApi.reorder(ids); loadLists(); }}
-      />
-
-      <main className="flex flex-1 overflow-hidden" style={{ backgroundColor: "var(--content-bg)" }}>
-        {selection || searchMode ? (
-          <>
-            <div className="flex-1 overflow-hidden">
-              <ReminderListView
-                title={getTitle()}
-                titleColor={getTitleColor()}
-                reminders={reminders}
-                listColor={getListColor()}
-                showInlineAdd={selection?.type === "list" && !searchMode}
-                onToggleComplete={handleToggleComplete}
-                onToggleFlag={handleToggleFlag}
-                onReminderClick={(r) => setSelectedReminder(r)}
-                onAdd={handleAdd}
-                onReorder={async (ids) => { await reminderApi.reorder(ids); refresh(); }}
-              />
-            </div>
-            {selectedReminder && (
-              <DetailPanel
-                reminder={selectedReminder}
-                lists={lists}
-                onUpdate={() => {
-                  refresh();
-                  reminderApi.findByList(selectedReminder.listId).then((data) => {
-                    const updated = data.find((r) => r.id === selectedReminder.id);
-                    if (updated) setSelectedReminder(updated);
-                  });
-                }}
-                onDelete={handleDelete}
-                onClose={() => setSelectedReminder(null)}
-              />
-            )}
-          </>
-        ) : (
-          <div className="flex flex-1 items-center justify-center">
-            <p style={{ color: "var(--text-secondary)" }}>리스트를 선택하세요</p>
-          </div>
+      {/* Sidebar - desktop always visible, mobile overlay */}
+      <div className={`
+        max-lg:fixed max-lg:inset-0 max-lg:z-40
+        ${sidebarOpen ? "max-lg:block" : "max-lg:hidden"}
+        lg:block
+      `}>
+        {/* Mobile backdrop */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/30 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
         )}
+        <div className="relative z-10 h-full">
+          <Sidebar
+            lists={lists}
+            smartCounts={smartCounts}
+            selection={selection}
+            onSelectSmart={selectSmart}
+            onSelectList={selectList}
+            onAddListClick={() => { setEditingList(null); setShowListModal(true); }}
+            onContextMenu={(e, list) => setContextMenu({ x: e.clientX, y: e.clientY, list })}
+            onSearch={handleSearch}
+            onSearchClear={handleSearchClear}
+            onListReorder={async (ids) => {
+              await withErrorHandling(async () => { await listApi.reorder(ids); loadLists(); });
+            }}
+          />
+        </div>
+      </div>
+
+      <main className="flex flex-1 flex-col overflow-hidden" style={{ backgroundColor: "var(--content-bg)" }}>
+        {/* Mobile header */}
+        <MobileHeader
+          title={getTitle()}
+          titleColor={getTitleColor()}
+          onMenuToggle={() => setSidebarOpen(true)}
+        />
+
+        <div className="flex flex-1 overflow-hidden">
+          {loading ? (
+            <div className="flex-1">
+              <ReminderListSkeleton />
+            </div>
+          ) : selection || searchMode ? (
+            <>
+              <div className="flex-1 overflow-hidden animate-fade-in">
+                <ReminderListView
+                  title={getTitle()}
+                  titleColor={getTitleColor()}
+                  reminders={reminders}
+                  listColor={getListColor()}
+                  showInlineAdd={selection?.type === "list" && !searchMode}
+                  onToggleComplete={handleToggleComplete}
+                  onToggleFlag={handleToggleFlag}
+                  onReminderClick={(r) => setSelectedReminder(r)}
+                  onAdd={handleAdd}
+                  onReorder={async (ids) => {
+                    await withErrorHandling(async () => { await reminderApi.reorder(ids); refresh(); });
+                  }}
+                />
+              </div>
+              {selectedReminder && (
+                <div className="max-md:fixed max-md:inset-0 max-md:z-30 max-md:flex max-md:items-end md:block">
+                  {/* Mobile backdrop for detail panel */}
+                  <div
+                    className="fixed inset-0 bg-black/30 md:hidden"
+                    onClick={() => setSelectedReminder(null)}
+                  />
+                  <div className="relative z-10 max-md:w-full max-md:max-h-[80vh] max-md:rounded-t-2xl max-md:overflow-hidden">
+                    <DetailPanel
+                      reminder={selectedReminder}
+                      lists={lists}
+                      onUpdate={() => {
+                        refresh();
+                        reminderApi.findByList(selectedReminder.listId).then((data) => {
+                          const updated = data.find((r) => r.id === selectedReminder.id);
+                          if (updated) setSelectedReminder(updated);
+                        });
+                      }}
+                      onDelete={handleDelete}
+                      onClose={() => setSelectedReminder(null)}
+                    />
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="flex flex-1 items-center justify-center">
+              <p style={{ color: "var(--text-secondary)" }}>리스트를 선택하세요</p>
+            </div>
+          )}
+        </div>
       </main>
 
       {/* List Modal */}
@@ -241,6 +347,9 @@ export default function Home() {
           onClose={() => setContextMenu(null)}
         />
       )}
+
+      {/* Toast */}
+      {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </div>
   );
 }

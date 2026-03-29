@@ -70,7 +70,7 @@ export default function DetailPanel({ reminder, lists, onUpdate, onDelete, onClo
 
   return (
     <div
-      className="flex h-full w-[320px] flex-shrink-0 flex-col overflow-y-auto border-l"
+      className="flex h-full w-[320px] flex-shrink-0 flex-col overflow-y-auto border-l animate-slide-in-right"
       style={{ backgroundColor: "var(--detail-bg)", borderColor: "var(--separator)" }}
     >
       <div className="flex justify-end p-2">

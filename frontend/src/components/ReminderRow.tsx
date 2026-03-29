@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Reminder } from "@/types";
 import { Flag } from "lucide-react";
 
@@ -32,28 +33,41 @@ function priorityLabel(priority: string): string | null {
 }
 
 export default function ReminderRow({ reminder, listColor, onToggleComplete, onClick }: ReminderRowProps) {
+  const [completing, setCompleting] = useState(false);
   const dueDateStr = formatDueDate(reminder.dueDate, reminder.dueTime);
   const priority = priorityLabel(reminder.priority);
   const hasSubInfo = dueDateStr || priority;
 
+  const handleComplete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!reminder.completed) {
+      setCompleting(true);
+      setTimeout(() => {
+        onToggleComplete(reminder.id);
+        setCompleting(false);
+      }, 500);
+    } else {
+      onToggleComplete(reminder.id);
+    }
+  };
+
   return (
     <div
-      className="flex cursor-pointer items-start gap-3 px-4 py-2"
+      className={`flex cursor-pointer items-start gap-3 px-4 py-2 transition-all ${
+        completing ? "animate-slide-up" : ""
+      }`}
       onClick={() => onClick(reminder)}
     >
       <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onToggleComplete(reminder.id);
-        }}
-        className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border-2 transition-colors"
+        onClick={handleComplete}
+        className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border-2 transition-all duration-200"
         style={{
-          borderColor: reminder.completed ? listColor : listColor,
-          backgroundColor: reminder.completed ? listColor : "transparent",
+          borderColor: listColor,
+          backgroundColor: reminder.completed || completing ? listColor : "transparent",
         }}
       >
-        {reminder.completed && (
-          <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+        {(reminder.completed || completing) && (
+          <svg width="10" height="8" viewBox="0 0 10 8" fill="none" className="animate-check-fill">
             <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         )}
@@ -62,8 +76,10 @@ export default function ReminderRow({ reminder, listColor, onToggleComplete, onC
       <div className="min-w-0 flex-1 border-b py-0.5" style={{ borderColor: "var(--separator)" }}>
         <div className="flex items-center justify-between">
           <span
-            className={`text-sm ${reminder.completed ? "line-through" : ""}`}
-            style={{ color: reminder.completed ? "var(--text-secondary)" : "var(--text-primary)" }}
+            className={`text-sm transition-all duration-200 ${
+              reminder.completed || completing ? "line-through" : ""
+            }`}
+            style={{ color: reminder.completed || completing ? "var(--text-secondary)" : "var(--text-primary)" }}
           >
             {reminder.title}
           </span>
