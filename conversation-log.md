@@ -180,3 +180,19 @@
 - API: GET /api/lists, GET /api/lists/{id}, POST /api/lists, PUT /api/lists/{id}, DELETE /api/lists/{id}, PATCH /api/lists/reorder
 - openapi.yml: OpenAPI 3.1.0 표준, ReminderList 전체 API + 스키마 + 에러 응답
 - 테스트: MockMvc 기반 8개 통합 테스트 전체 통과
+
+---
+
+### 26. commit
+
+- 커밋: `8b53fab` — "ReminderList REST API 구현 및 OpenAPI 스펙 정의"
+- 포함: openapi.yml, WebConfig, GlobalExceptionHandler, ReminderListController, Controller 통합 테스트, application.properties
+
+---
+
+### 27. @tasks.md의 phase 1 기능의 전체를 개발하고, task하나가 완료될때마다 tasks.md 파일에 check를 해줘
+
+- 작업: Phase 1 전체 구현 완료
+- 신규 파일: Priority Enum, Reminder Entity/Test, ReminderRepository, ReminderRequest/Response DTO, ReminderService 인터페이스+구현체+통합 테스트, ReminderController+통합 테스트, openapi.yml Reminder API 추가
+- tasks.md: Phase 1 전체 항목 체크 완료
+- 결과: 전체 테스트 통과, 앱 기동+curl 검증 완료

@@ -7,93 +7,93 @@
 ## Phase 1 — Backend API (기본 CRUD)
 
 ### 1.1 프로젝트 설정
-- [ ] `application.properties` — H2 콘솔 활성화, JPA DDL auto-create, JSON 날짜 포맷
-- [ ] `WebConfig` — CORS 설정 (`http://localhost:3000` 허용)
+- [x] `application.properties` — H2 콘솔 활성화, JPA DDL auto-create, JSON 날짜 포맷
+- [x] `WebConfig` — CORS 설정 (`http://localhost:3000` 허용)
 
 ### 1.2 Entity & Enum
-- [ ] `Priority` Enum (NONE, LOW, MEDIUM, HIGH)
-- [ ] `ReminderList` Entity (id, name, color, icon, displayOrder, createdAt, updatedAt)
-- [ ] `Reminder` Entity (id, title, notes, dueDate, dueTime, priority, flagged, completed, completedAt, displayOrder, list, createdAt, updatedAt)
-- [ ] `@PrePersist` / `@PreUpdate` — createdAt, updatedAt 자동 설정
+- [x] `Priority` Enum (NONE, LOW, MEDIUM, HIGH)
+- [x] `ReminderList` Entity (id, name, color, icon, displayOrder, createdAt, updatedAt)
+- [x] `Reminder` Entity (id, title, notes, dueDate, dueTime, priority, flagged, completed, completedAt, displayOrder, list, createdAt, updatedAt)
+- [x] createdAt, updatedAt — 생성자/변경 메서드에서 직접 설정
 
 ### 1.3 Repository
-- [ ] `ReminderListRepository` — findAllByOrderByDisplayOrderAsc
-- [ ] `ReminderRepository` — findByListId, findByCompleted, findByFlagged, findByDueDate, findByDueDateIsNotNull, 검색 쿼리
+- [x] `ReminderListRepository` — findAllByOrderByDisplayOrderAsc
+- [x] `ReminderRepository` — findByListId, findByCompleted, findByFlagged, findByDueDate, findByDueDateIsNotNull, 검색 쿼리
 
 ### 1.4 DTO (Java Record)
-- [ ] `ReminderListRequest` / `ReminderListResponse`
-- [ ] `ReminderRequest` / `ReminderResponse`
-- [ ] `ReorderRequest` (id 리스트 순서)
+- [x] `ReminderListRequest` / `ReminderListResponse`
+- [x] `ReminderRequest` / `ReminderResponse`
+- [x] `ReorderRequest` (id 리스트 순서)
 
 ### 1.5 Service
-- [ ] `ReminderListService` — 생성, 조회(전체), 수정, 삭제(cascade), 순서 변경
-- [ ] `ReminderService` — 생성, 리스트별 조회, 수정, 삭제, 완료 토글, 깃발 토글, 순서 변경
-- [ ] `ReminderService` — 스마트 리스트 조회 (today, scheduled, all, completed, flagged)
-- [ ] `ReminderService` — 검색 (title, notes LIKE)
+- [x] `ReminderListService` — 생성, 조회(전체), 수정, 삭제(cascade), 순서 변경
+- [x] `ReminderService` — 생성, 리스트별 조회, 수정, 삭제, 완료 토글, 깃발 토글, 순서 변경
+- [x] `ReminderService` — 스마트 리스트 조회 (today, scheduled, all, completed, flagged)
+- [x] `ReminderService` — 검색 (title, notes LIKE)
 
 ### 1.6 Controller
-- [ ] `ReminderListController` — GET `/api/lists`
-- [ ] `ReminderListController` — POST `/api/lists`
-- [ ] `ReminderListController` — PUT `/api/lists/{id}`
-- [ ] `ReminderListController` — DELETE `/api/lists/{id}`
-- [ ] `ReminderListController` — PATCH `/api/lists/reorder`
-- [ ] `ReminderController` — GET `/api/lists/{listId}/reminders`
-- [ ] `ReminderController` — POST `/api/lists/{listId}/reminders`
-- [ ] `ReminderController` — PUT `/api/reminders/{id}`
-- [ ] `ReminderController` — DELETE `/api/reminders/{id}`
-- [ ] `ReminderController` — PATCH `/api/reminders/{id}/complete`
-- [ ] `ReminderController` — PATCH `/api/reminders/{id}/flag`
-- [ ] `ReminderController` — PATCH `/api/reminders/reorder`
-- [ ] `ReminderController` — GET `/api/reminders/today`
-- [ ] `ReminderController` — GET `/api/reminders/scheduled`
-- [ ] `ReminderController` — GET `/api/reminders/all`
-- [ ] `ReminderController` — GET `/api/reminders/completed`
-- [ ] `ReminderController` — GET `/api/reminders/flagged`
-- [ ] `ReminderController` — GET `/api/reminders/search?q=`
+- [x] `ReminderListController` — GET `/api/lists`
+- [x] `ReminderListController` — POST `/api/lists`
+- [x] `ReminderListController` — PUT `/api/lists/{id}`
+- [x] `ReminderListController` — DELETE `/api/lists/{id}`
+- [x] `ReminderListController` — PATCH `/api/lists/reorder`
+- [x] `ReminderController` — GET `/api/lists/{listId}/reminders`
+- [x] `ReminderController` — POST `/api/lists/{listId}/reminders`
+- [x] `ReminderController` — PUT `/api/reminders/{id}`
+- [x] `ReminderController` — DELETE `/api/reminders/{id}`
+- [x] `ReminderController` — PATCH `/api/reminders/{id}/complete`
+- [x] `ReminderController` — PATCH `/api/reminders/{id}/flag`
+- [x] `ReminderController` — PATCH `/api/reminders/reorder`
+- [x] `ReminderController` — GET `/api/reminders/today`
+- [x] `ReminderController` — GET `/api/reminders/scheduled`
+- [x] `ReminderController` — GET `/api/reminders/all`
+- [x] `ReminderController` — GET `/api/reminders/completed`
+- [x] `ReminderController` — GET `/api/reminders/flagged`
+- [x] `ReminderController` — GET `/api/reminders/search?q=`
 
 ### 1.7 검증
-- [ ] Gradle 빌드 성공 확인
-- [ ] 앱 기동 후 H2 Console 접속 확인
-- [ ] 주요 API 엔드포인트 curl 테스트 (리스트 CRUD, 리마인더 CRUD)
+- [x] Gradle 빌드 성공 확인
+- [x] 앱 기동 후 H2 Console 접속 확인
+- [x] 주요 API 엔드포인트 curl 테스트 (리스트 CRUD, 리마인더 CRUD)
 
 ---
 
 ## Phase 2 — Frontend 셋업 + 사이드바 + 리스트 조회
 
 ### 2.1 프로젝트 초기화
-- [ ] `create-next-app` 실행 (TypeScript, Tailwind CSS, App Router, src/)
-- [ ] `next.config.ts` — rewrites 설정 (`/api/**` → `localhost:8080`)
-- [ ] 글로벌 CSS — Apple 폰트 스택, CSS custom properties (색상 팔레트)
-- [ ] `lucide-react` 설치
+- [x] `create-next-app` 실행 (TypeScript, Tailwind CSS, App Router, src/)
+- [x] `next.config.ts` — rewrites 설정 (`/api/**` → `localhost:8080`)
+- [x] 글로벌 CSS — Apple 폰트 스택, CSS custom properties (색상 팔레트)
+- [x] `lucide-react` 설치
 
 ### 2.2 TypeScript 타입
-- [ ] `types/index.ts` — ReminderList, Reminder, Priority 타입 정의
+- [x] `types/index.ts` — ReminderList, Reminder, Priority 타입 정의
 
 ### 2.3 API Client
-- [ ] `lib/api.ts` — fetch 래퍼 (리스트 API, 리마인더 API, 스마트 리스트 API)
+- [x] `lib/api.ts` — fetch 래퍼 (리스트 API, 리마인더 API, 스마트 리스트 API)
 
 ### 2.4 레이아웃
-- [ ] Root Layout — 사이드바 (280px) + 컨텐츠 영역 flex 구조
-- [ ] `Sidebar` 컴포넌트 — 스크롤 독립, 하단 고정 영역
+- [x] Root Layout — 사이드바 (280px) + 컨텐츠 영역 flex 구조
+- [x] `Sidebar` 컴포넌트 — 스크롤 독립, 하단 고정 영역
 
 ### 2.5 스마트 리스트 카드
-- [ ] `SmartListCard` 컴포넌트 — 원형 아이콘 + 카운트 + 라벨
-- [ ] `SmartListGrid` 컴포넌트 — 2x2 + 1 그리드 배치
-- [ ] 카드 색상 (오늘=파란, 예정=빨간, 전체=보라, 깃발=주황, 완료=회색)
-- [ ] 카드 클릭 → 선택 상태 관리
+- [x] `SmartListCard` 컴포넌트 — 원형 아이콘 + 카운트 + 라벨
+- [x] `SmartListGrid` 컴포넌트 — 2x2 + 1 그리드 배치
+- [x] 카드 색상 (오늘=파란, 예정=빨간, 전체=보라, 깃발=주황, 완료=회색)
+- [x] 카드 클릭 → 선택 상태 관리
 
 ### 2.6 내 리스트 섹션
-- [ ] `MyLists` 컴포넌트 — API fetch → 리스트 목록 렌더링
-- [ ] 리스트 행: 색상 원형 + 이름 + 카운트
-- [ ] 선택된 리스트 배경 하이라이트
-- [ ] `+ 리스트 추가` 버튼 (하단 고정, Phase 4에서 동작 연결)
+- [x] `MyLists` 컴포넌트 — API fetch → 리스트 목록 렌더링
+- [x] 리스트 행: 색상 원형 + 이름 + 카운트
+- [x] 선택된 리스트 배경 하이라이트
+- [x] `+ 리스트 추가` 버튼 (하단 고정, Phase 4에서 동작 연결)
 
 ### 2.7 리마인더 목록 (읽기 전용)
-- [ ] `ReminderList` 컴포넌트 — 선택된 리스트/스마트리스트의 리마인더 표시
-- [ ] `ReminderRow` 컴포넌트 — 체크 원 + 제목 + 부가정보 + 깃발
-- [ ] 리스트 헤더 (이름, 색상 텍스트)
-- [ ] 들여쓰기 구분선 (Apple 스타일)
-- [ ] `EmptyState` 컴포넌트 — 리마인더 없을 때 안내
+- [x] `ReminderList` 컴포넌트 — 선택된 리스트/스마트리스트의 리마인더 표시
+- [x] `ReminderRow` 컴포넌트 — 체크 원 + 제목 + 부가정보 + 깃발
+- [x] 리스트 헤더 (이름, 색상 텍스트)
+- [x] 들여쓰기 구분선 (Apple 스타일)
+- [x] `EmptyState` 컴포넌트 — 리마인더 없을 때 안내
 
 ---
 
